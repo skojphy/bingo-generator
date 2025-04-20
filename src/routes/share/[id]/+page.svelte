@@ -1,172 +1,169 @@
 <script lang="ts">
-import { onMount } from 'svelte';
-import { page } from '$app/stores';
-import { error } from '@sveltejs/kit';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { error } from '@sveltejs/kit';
 
-let board: string[][] = [];
-let styleConfig: any = {};
-let loading = true;
-let notFound = false;
-let bingoCount = 0;
-let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
-let boardTitle = '';
-let createdAt = '';
+	let board: string[][] = [];
+	let styleConfig: any = {};
+	let loading = true;
+	let notFound = false;
+	let bingoCount = 0;
+	let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+	let boardTitle = '';
+	let createdAt = '';
 
-function updateBingoCount() {
-  let count = 0;
-  for (let i = 0; i < 5; ++i) if (checked[i].every(v => v)) count++;
-  for (let j = 0; j < 5; ++j) if (checked.every(row => row[j])) count++;
-  if ([0,1,2,3,4].every(k => checked[k][k])) count++;
-  if ([0,1,2,3,4].every(k => checked[k][4-k])) count++;
-  bingoCount = count;
-}
+	function updateBingoCount() {
+		let count = 0;
+		for (let i = 0; i < 5; ++i) if (checked[i].every((v) => v)) count++;
+		for (let j = 0; j < 5; ++j) if (checked.every((row) => row[j])) count++;
+		if ([0, 1, 2, 3, 4].every((k) => checked[k][k])) count++;
+		if ([0, 1, 2, 3, 4].every((k) => checked[k][4 - k])) count++;
+		bingoCount = count;
+	}
 
-function toggleCell(i: number, j: number) {
-  checked[i][j] = !checked[i][j];
-  updateBingoCount();
-}
+	function toggleCell(i: number, j: number) {
+		checked[i][j] = !checked[i][j];
+		updateBingoCount();
+	}
 
-onMount(async () => {
-  const url = new URL(window.location.href);
-  const id = url.pathname.split('/').pop();
-  try {
-    const res = await fetch(`/api/bingo?id=${id}`);
-    const data = await res.json();
-    if (data.board) {
-      board = data.board;
-      styleConfig = data.styleConfig || {};
-      boardTitle = data.boardTitle || '';
-      createdAt = data.createdAt || '';
-      checked = Array.from({ length: 5 }, () => Array(5).fill(false));
-      updateBingoCount();
-      loading = false;
-    } else {
-      notFound = true;
-      loading = false;
-    }
-  } catch (e) {
-    notFound = true;
-    loading = false;
-  }
-});
+	onMount(async () => {
+		const url = new URL(window.location.href);
+		const id = url.pathname.split('/').pop();
+		try {
+			const res = await fetch(`/api/bingo?id=${id}`);
+			const data = await res.json();
+			if (data.board) {
+				board = data.board;
+				styleConfig = data.styleConfig || {};
+				boardTitle = data.boardTitle || '';
+				createdAt = data.createdAt || '';
+				checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+				updateBingoCount();
+				loading = false;
+			} else {
+				notFound = true;
+				loading = false;
+			}
+		} catch (e) {
+			notFound = true;
+			loading = false;
+		}
+	});
 </script>
 
 {#if loading}
-  <div class="loading">빙고판을 불러오는 중...</div>
+	<div class="loading">빙고판을 불러오는 중...</div>
 {:else if notFound}
-  <div class="not-found">빙고판을 찾을 수 없습니다.</div>
+	<div class="not-found">빙고판을 찾을 수 없습니다.</div>
 {:else}
-  <div class="bingo-shared bingo-shared-spacing">
-    {#if boardTitle}
-      <div class="bingo-title-shared">{boardTitle}</div>
-    {/if}
-    <div class="board-grid" style="width:600px; height:600px; background:{styleConfig.bgColor || '#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color || '#222222'};">
-      {#each board as row, i}
-        {#each row as cell, j}
-          <div class="cell-outer">
-            <div
-              class="cell-content bingo-cell {checked[i][j] ? 'checked' : ''}"
-              on:click={() => toggleCell(i, j)}
-              tabindex="0"
-              role="button"
-              aria-pressed={checked[i][j]}
-              style="background:{checked[i][j] ? (styleConfig.checkedCellColor ?? styleConfig.cellColor ?? '#2f8466') : (styleConfig.cellColor ?? '#b5f4e0')};border:1.5px solid {styleConfig.cellBorderColor ?? '#222222'};border-style:{styleConfig.borderVisible === false ? 'none' : 'solid'};color:{checked[i][j] ? (styleConfig.checkedCellTextColor ?? styleConfig.color ?? '#ffffff') : (styleConfig.color ?? '#222222')};"
-            >{cell}</div>
-          </div>
-        {/each}
-      {/each}
-    </div>
-    <div class="bingo-count-shared">완성한 빙고: <strong>{bingoCount}</strong></div>
-  </div>
+	<div class="bingo-shared bingo-shared-spacing">
+		{#if boardTitle}
+			<div class="bingo-title-shared">{boardTitle}</div>
+		{/if}
+		<div
+			class="board-grid"
+			style="width:600px; height:600px; background:{styleConfig.bgColor ||
+				'#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color ||
+				'#222222'};"
+		>
+			{#each board as row, i}
+				{#each row as cell, j}
+					<div class="cell-outer">
+						<div
+							class="cell-content bingo-cell {checked[i][j] ? 'checked' : ''}"
+							on:click={() => toggleCell(i, j)}
+							tabindex="0"
+							role="button"
+							aria-pressed={checked[i][j]}
+							style="background:{checked[i][j]
+								? (styleConfig.checkedCellColor ?? styleConfig.cellColor ?? '#2f8466')
+								: (styleConfig.cellColor ??
+									'#b5f4e0')};border:1.5px solid {styleConfig.cellBorderColor ??
+								'#222222'};border-style:{styleConfig.borderVisible === false
+								? 'none'
+								: 'solid'};color:{checked[i][j]
+								? (styleConfig.checkedCellTextColor ?? styleConfig.color ?? '#ffffff')
+								: (styleConfig.color ?? '#222222')};"
+						>
+							{cell}
+						</div>
+					</div>
+				{/each}
+			{/each}
+		</div>
+		<div class="bingo-count-shared">완성한 빙고: <strong>{bingoCount}</strong></div>
+	</div>
 {/if}
 
-<footer class="footer">
-  <div class="footer-content">
-    <span> {new Date().getFullYear()} Bingo Generator. All rights reserved.</span>
-  </div>
-</footer>
-
 <style>
-.loading, .not-found {
-  text-align: center;
-  font-size: 1.2em;
-  padding: 2em 0;
-  color: #888;
-}
-.bingo-shared-spacing {
-  margin-top: 48px;
-}
-.bingo-count-shared {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 32px auto 32px auto;
-  font-size: 1.13em;
-  font-weight: 500;
-  color: #2d7d2d;
-}
-.bingo-title-shared {
-  width: 600px;
-  margin: 0 auto 18px auto;
-  font-size: 1.35em;
-  font-weight: bold;
-  text-align: center;
-  background: #fafafa;
-  border-radius: 8px;
-  border: 1.5px solid #bbb;
-  padding: 0.45em 0.8em;
-  margin-bottom: 0.5em;
-}
-.board-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  gap: 12px;
-  margin: 0 auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-  border-radius: 12px;
-  padding: 24px;
-  z-index: 0;
-}
-.cell-outer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.cell-content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.05rem;
-  text-align: center;
-  white-space: pre-line;
-  border-radius: 10px;
-  box-sizing: border-box;
-  color: inherit;
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-}
-/* 스타일 config에 따라 동적으로 적용, !important 제거 */
-.bingo-cell.checked {
-  /* background: #b3e6b3 !important; */
-  /* color: #1a4d1a !important; */
-}
-.footer {
-  width: 100vw;
-  background: #f5f5f5;
-  border-top: 1.5px solid #e0e0e0;
-  padding: 24px 0 18px 0;
-  margin-top: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.footer-content {
-  color: #666;
-  font-size: 1em;
-  text-align: center;
-}
+	.loading,
+	.not-found {
+		text-align: center;
+		font-size: 1.2em;
+		padding: 2em 0;
+		color: #888;
+	}
+	.bingo-shared-spacing {
+		margin-top: 48px;
+	}
+	.bingo-count-shared {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 32px auto 32px auto;
+		font-size: 1.13em;
+		font-weight: 500;
+		color: #2d7d2d;
+	}
+	.bingo-title-shared {
+		width: 600px;
+		margin: 0 auto 18px auto;
+		font-size: 1.35em;
+		font-weight: bold;
+		text-align: center;
+		background: #fafafa;
+		border-radius: 8px;
+		border: 1.5px solid #bbb;
+		padding: 0.45em 0.8em;
+		margin-bottom: 0.5em;
+	}
+	.board-grid {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		grid-template-rows: repeat(5, 1fr);
+		gap: 12px;
+		margin: 0 auto;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+		border-radius: 12px;
+		padding: 24px;
+		z-index: 0;
+	}
+	.cell-outer {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+	.cell-content {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.05rem;
+		text-align: center;
+		white-space: pre-line;
+		border-radius: 10px;
+		box-sizing: border-box;
+		color: inherit;
+		background: transparent;
+		cursor: pointer;
+		transition:
+			background 0.18s,
+			color 0.18s;
+	}
+	/* 스타일 config에 따라 동적으로 적용, !important 제거 */
+	.bingo-cell.checked {
+		/* background: #b3e6b3 !important; */
+		/* color: #1a4d1a !important; */
+	}
 </style>
