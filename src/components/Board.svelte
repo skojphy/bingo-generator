@@ -27,24 +27,19 @@
 </script>
 
 <div class="style-controls">
-	<label
-		>글자색
-		<ColorPicker bind:hex={styleConfig.color} />
+	<label>글자색
+		<ColorPicker bind:hex={styleConfig.color} label="" />
 	</label>
-	<label
-		>배경색
-		<ColorPicker bind:hex={styleConfig.bgColor} />
+	<label>배경색
+		<ColorPicker bind:hex={styleConfig.bgColor} label="" />
 	</label>
-	<label
-		>셀 배경색
-		<ColorPicker bind:hex={styleConfig.cellColor} />
+	<label>셀 배경색
+		<ColorPicker bind:hex={styleConfig.cellColor} label="" />
 	</label>
-	<label
-		>셀 테두리색
-		<ColorPicker bind:hex={styleConfig.cellBorderColor} />
+	<label>셀 테두리색
+		<ColorPicker bind:hex={styleConfig.cellBorderColor} label="" />
 	</label>
-	<label
-		>폰트
+	<label>폰트
 		<select bind:value={styleConfig.font}>
 			{#each fontOptions as font}
 				<option value={font}>{font}</option>
