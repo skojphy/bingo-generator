@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import Cell from './Cell.svelte';
+	import ThemeStyleControls from './ThemeStyleControls.svelte';
 	export let rooms: string[] = Array(25).fill('');
 	export let styleConfig = {
 		color: '#222222',
@@ -36,6 +37,7 @@
 	}
 	let shareUrl = '';
 	let copySuccess = false;
+	let bingoCount = 0; // bingoCount 정의 추가 (초기값 0)
 
 	async function shareBoard() {
 		// Notion API에 POST 요청
@@ -96,7 +98,7 @@
 	// });
 
 	function decodeBoard(param: string): string[][] {
-		const arr = param.split(',').map(cell => decodeURIComponent(cell));
+		const arr = param.split(',').map((cell) => decodeURIComponent(cell));
 		const grid = [];
 		for (let i = 0; i < 5; ++i) grid.push(arr.slice(i * 5, i * 5 + 5));
 		return grid;
@@ -117,79 +119,18 @@
 	function updateBingoCount() {
 		let count = 0;
 		// 가로
-		for (let i = 0; i < 5; ++i) if (checked[i].every(v => v)) count++;
+		for (let i = 0; i < 5; ++i) if (checked[i].every((v) => v)) count++;
 		// 세로
-		for (let j = 0; j < 5; ++j) if (checked.every(row => row[j])) count++;
+		for (let j = 0; j < 5; ++j) if (checked.every((row) => row[j])) count++;
 		// 대각선
-		if ([0,1,2,3,4].every(k => checked[k][k])) count++;
-		if ([0,1,2,3,4].every(k => checked[k][4-k])) count++;
+		if ([0, 1, 2, 3, 4].every((k) => checked[k][k])) count++;
+		if ([0, 1, 2, 3, 4].every((k) => checked[k][4 - k])) count++;
 		bingoCount = count;
 	}
 </script>
 
-<div
-	class="style-controls-grid"
-	style="
-    display: grid;
-    grid-template-columns: repeat(3, minmax(120px, 1fr));
-    grid-template-rows: repeat(3, auto);
-    gap: 12px 18px;
-    align-items: end;
-    margin-bottom: 12px;
-    max-width: 600px;
-  "
->
-	<label
-		>셀 배경색
-		<ColorPicker bind:hex={styleConfig.cellColor} label="" />
-	</label>
-	<label
-		>글자색
-		<ColorPicker bind:hex={styleConfig.color} label="" />
-	</label>
-	<label
-		>전체 배경색
-		<ColorPicker bind:hex={styleConfig.bgColor} label="" />
-	</label>
-	<label
-		>선택 시 셀 배경색
-		<ColorPicker bind:hex={styleConfig.checkedCellColor} label="" />
-	</label>
-	<label
-		>선택 시 글자색
-		<ColorPicker bind:hex={styleConfig.checkedCellTextColor} label="" />
-	</label>
-	<label
-		>셀 테두리색
-		<ColorPicker bind:hex={styleConfig.cellBorderColor} label="" />
-	</label>
-	<label style="font-size: 0.95em;">
-		폰트
-		<select bind:value={styleConfig.font}>
-			{#each fontOptions as font}
-				<option value={font}>{font}</option>
-			{/each}
-		</select>
-	</label>
-	<label style="font-size: 0.95em; white-space: nowrap;">
-		<input type="checkbox" bind:checked={styleConfig.borderVisible} aria-label="셀 테두리 표시" />
-		셀 테두리 표시
-	</label>
-</div>
-
-<!-- 공유 버튼 UI 추가 -->
-<div class="share-controls">
-  <button class="share-btn" on:click={shareBoard}>
-    공유하기
-  </button>
-  {#if shareUrl}
-    <input class="share-url" type="text" readonly value={shareUrl} on:focus={(e) => e.target.select()} />
-    <button class="copy-btn" on:click={copyShareUrl}>복사</button>
-    {#if copySuccess}
-      <span class="copy-success">복사됨!</span>
-    {/if}
-  {/if}
-</div>
+<!-- 테마 스타일 커스텀 컴포넌트로 분리 -->
+<ThemeStyleControls bind:styleConfig {fontOptions} />
 
 <div
 	class="board-grid"
@@ -197,7 +138,13 @@
 >
 	{#each board as row, i}
 		{#each row as cell, j}
-			<div class="cell-outer" tabindex="0" on:click={() => toggleCell(i, j)} role="button" aria-pressed={checked[i][j]}>
+			<div
+				class="cell-outer"
+				on:click={() => toggleCell(i, j)}
+				tabindex="0"
+				role="button"
+				aria-pressed={checked[i][j]}
+			>
 				<textarea
 					class="cell-input"
 					bind:this={textareaRefs[i][j]}
@@ -206,11 +153,19 @@
 					maxlength={40}
 					placeholder="테마명을 입력하세요"
 					rows="3"
-					style="background:{checked[i][j] ? styleConfig.checkedCellColor : styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
+					style="background:{checked[i][j]
+						? styleConfig.checkedCellColor
+						: styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible
+						? 'solid'
+						: 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
 				></textarea>
 				<div
 					class="cell-content"
-					style="background:{checked[i][j] ? styleConfig.checkedCellColor : styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
+					style="background:{checked[i][j]
+						? styleConfig.checkedCellColor
+						: styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible
+						? 'solid'
+						: 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
 				>
 					{board[i][j] || '테마명을 입력하세요'}
 				</div>
@@ -219,22 +174,28 @@
 	{/each}
 </div>
 
+<!-- 공유 버튼 UI 추가 -->
+<div class="share-controls">
+	<button class="share-btn" on:click={shareBoard}> 공유하기 </button>
+	{#if shareUrl}
+		<input
+			class="share-url"
+			type="text"
+			readonly
+			value={shareUrl}
+			on:focus={(e) => {
+				const target = e.target as HTMLInputElement | null;
+				if (target) target.select();
+			}}
+		/>
+		<button class="copy-btn" on:click={copyShareUrl}>복사</button>
+		{#if copySuccess}
+			<span class="copy-success">복사됨!</span>
+		{/if}
+	{/if}
+</div>
+
 <style>
-	.style-controls-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(120px, 1fr));
-		grid-template-rows: repeat(3, auto);
-		gap: 12px 18px;
-		align-items: end;
-		margin-bottom: 12px;
-		max-width: 600px;
-	}
-	.style-controls-grid label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 1rem;
-	}
 	.board-grid {
 		display: grid;
 		grid-template-columns: repeat(5, 1fr);
@@ -348,7 +309,9 @@
 	.bingo-cell {
 		cursor: pointer;
 		user-select: none;
-		transition: background 0.18s, color 0.18s;
+		transition:
+			background 0.18s,
+			color 0.18s;
 	}
 	.bingo-cell.checked {
 		background: #b3e6b3 !important;
