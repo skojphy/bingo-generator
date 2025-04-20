@@ -48,9 +48,9 @@
 
 <div class="bingo-grid">
 	{#each $bingoData as item, index}
-		<div class="bingo-cell" on:click={() => toggle(index)} class:active={$bingoState[index]}>
+		<button type="button" class="bingo-cell" class:active={$bingoState[index]} on:click={() => toggle(index)}>
 			{item}
-		</div>
+		</button>
 	{/each}
 </div>
 
