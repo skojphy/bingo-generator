@@ -14,6 +14,9 @@
 - [x] 테마 25개 입력 폼 구현 (커밋: 43f6cca)
 - [x] 색상 옵션/직접입력 UI 구현 (커밋: 43f6cca)
 - [x] 폰트 옵션 선택 UI 구현 (커밋: 43f6cca)
+- [x] 컬러피커(svelte-awesome-color-picker)로 글자색/배경색/셀 배경/테두리색 옵션 적용 및 HEX 기본값 보장 (커밋: see log)
+- [x] 컬러피커 라벨 제거 및 미니멀 UI(컬러 원만 보이고 클릭 시에만 열림) (커밋: see log)
+- [x] 컬러피커 undefined/null/3자리 HEX 등 에러 방지 로직 추가 (커밋: see log)
 
 ---
 
