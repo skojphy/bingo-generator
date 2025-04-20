@@ -57,7 +57,9 @@ onMount(async () => {
   <div class="not-found">빙고판을 찾을 수 없습니다.</div>
 {:else}
   <div class="bingo-shared bingo-shared-spacing">
-    <div class="bingo-title-shared">{boardTitle}</div>
+    {#if boardTitle}
+      <div class="bingo-title-shared">{boardTitle}</div>
+    {/if}
     <div class="board-grid" style="width:600px; height:600px; background:{styleConfig.bgColor || '#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color || '#222222'};">
       {#each board as row, i}
         {#each row as cell, j}
@@ -78,6 +80,12 @@ onMount(async () => {
   </div>
 {/if}
 
+<footer class="footer">
+  <div class="footer-content">
+    <span> {new Date().getFullYear()} Bingo Generator. All rights reserved.</span>
+  </div>
+</footer>
+
 <style>
 .loading, .not-found {
   text-align: center;
@@ -92,7 +100,7 @@ onMount(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 32px auto 0 auto;
+  margin: 32px auto 32px auto;
   font-size: 1.13em;
   font-weight: 500;
   color: #2d7d2d;
@@ -145,5 +153,20 @@ onMount(async () => {
 .bingo-cell.checked {
   /* background: #b3e6b3 !important; */
   /* color: #1a4d1a !important; */
+}
+.footer {
+  width: 100vw;
+  background: #f5f5f5;
+  border-top: 1.5px solid #e0e0e0;
+  padding: 24px 0 18px 0;
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.footer-content {
+  color: #666;
+  font-size: 1em;
+  text-align: center;
 }
 </style>

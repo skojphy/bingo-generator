@@ -26,6 +26,7 @@
 	$: board = Array.from({ length: 5 }, (_, i) => rooms.slice(i * 5, i * 5 + 5));
 	function updateCell(i: number, j: number, value: string) {
 		rooms[i * 5 + j] = value;
+		styleChanged = true; // 텍스트 수정 시에도 적용하기 버튼 활성화
 	}
 	const fontOptions = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
 	let textareaRefs = Array.from({ length: 5 }, () => Array(5));
@@ -139,7 +140,43 @@
 	$: styleConfig, handleStyleChange();
 
 	function applyStyle() {
-		styleChanged = false;
+		let id = shareUrl?.split('/').pop();
+		if (!id) {
+			// 공유된 적이 없으면 새로 생성(POST) 후 PATCH
+			fetch('/api/bingo', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ board, styleConfig, boardTitle, name: boardTitle })
+			}).then(async (res) => {
+				const data = await res.json();
+				if (data.id) {
+					shareUrl = `${window.location.origin}/share/${data.id}`;
+					// 바로 PATCH로 동기화
+					fetch('/api/bingo', {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ id: data.id, board, styleConfig, boardTitle, name: boardTitle })
+					}).then(() => {
+						styleChanged = false;
+					});
+				} else {
+					alert('적용 실패: ' + (data.error || '알 수 없는 에러'));
+				}
+			});
+		} else {
+			fetch('/api/bingo', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id, board, styleConfig, boardTitle, name: boardTitle })
+			}).then(async (res) => {
+				const data = await res.json();
+				if (!res.ok) {
+					alert('적용 실패: ' + (data.error || '알 수 없는 에러'));
+				} else {
+					styleChanged = false;
+				}
+			});
+		}
 	}
 </script>
 
@@ -154,6 +191,7 @@
 		placeholder="제목을 입력하세요"
 		bind:value={boardTitle}
 		maxlength={40}
+		on:input={() => styleChanged = true}
 	/>
 </div>
 
@@ -202,7 +240,7 @@
 
 <!-- 공유 버튼 UI: 빙고판과 버튼 사이 여백 추가 -->
 <div class="share-controls share-controls-bottom">
-	<button class="share-btn" on:click={styleChanged ? applyStyle : shareBoard}>
+	<button class="share-btn {styleChanged ? 'apply-btn' : ''}" on:click={styleChanged ? applyStyle : shareBoard}>
 		{styleChanged ? '적용하기' : '공유하기'}
 	</button>
 	{#if shareUrl}
@@ -307,6 +345,15 @@
 	}
 	.share-btn:hover {
 		background: #e0e0e0;
+	}
+	.apply-btn {
+		background: #2f8466;
+		color: #fff;
+		border: 1.5px solid #2f8466;
+		transition: background 0.2s, color 0.2s;
+	}
+	.apply-btn:hover {
+		background: #22624c;
 	}
 	.share-url {
 		width: 320px;
