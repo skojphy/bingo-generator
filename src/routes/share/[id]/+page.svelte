@@ -64,7 +64,7 @@ onMount(async () => {
               tabindex="0"
               role="button"
               aria-pressed={checked[i][j]}
-              style="background:{styleConfig.cellColor || '#fff9f9'};border:1.5px solid {styleConfig.cellBorderColor || '#bbbbbb'};border-style:{styleConfig.borderVisible === false ? 'none' : 'solid'};"
+              style="background:{checked[i][j] ? (styleConfig.checkedCellColor || '#b3e6b3') : (styleConfig.cellColor || '#fff9f9')};border:1.5px solid {styleConfig.cellBorderColor || '#bbbbbb'};border-style:{styleConfig.borderVisible === false ? 'none' : 'solid'};color:{checked[i][j] ? (styleConfig.checkedCellTextColor || '#1a4d1a') : (styleConfig.color || '#222222')};"
             >{cell}</div>
           </div>
         {/each}

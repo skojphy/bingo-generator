@@ -8,6 +8,8 @@
 		font: 'sans-serif',
 		cellColor: '#fff9f9',
 		cellBorderColor: '#bbbbbb',
+		checkedCellColor: '#b3e6b3',
+		checkedCellTextColor: '#1a4d1a',
 		borderVisible: true
 	};
 	// HEX 유효성 보장: undefined/null 방지
@@ -19,6 +21,8 @@
 	$: styleConfig.bgColor = ensureHex(styleConfig.bgColor, '#ffffff');
 	$: styleConfig.cellColor = ensureHex(styleConfig.cellColor, '#fff9f9');
 	$: styleConfig.cellBorderColor = ensureHex(styleConfig.cellBorderColor, '#bbbbbb');
+	$: styleConfig.checkedCellColor = ensureHex(styleConfig.checkedCellColor, '#b3e6b3');
+	$: styleConfig.checkedCellTextColor = ensureHex(styleConfig.checkedCellTextColor, '#1a4d1a');
 	// 5x5 빙고판 2차원 배열로 변환
 	$: board = Array.from({ length: 5 }, (_, i) => rooms.slice(i * 5, i * 5 + 5));
 	function updateCell(i: number, j: number, value: string) {
@@ -26,16 +30,12 @@
 	}
 	const fontOptions = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
 	let textareaRefs = Array.from({ length: 5 }, () => Array(5));
-
-	// 공유 기능
+	let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+	function toggleCell(i: number, j: number) {
+		checked[i][j] = !checked[i][j];
+	}
 	let shareUrl = '';
 	let copySuccess = false;
-	let lastSharedBoard = '';
-	let lastSharedStyle = '';
-	let sharedId = '';
-	let hasUnsavedChanges = false;
-
-	$: hasUnsavedChanges = shareUrl && (JSON.stringify(board) !== lastSharedBoard || JSON.stringify(styleConfig) !== lastSharedStyle);
 
 	async function shareBoard() {
 		// Notion API에 POST 요청
@@ -47,28 +47,8 @@
 		const data = await res.json();
 		if (data.id) {
 			shareUrl = `${window.location.origin}/share/${data.id}`;
-			sharedId = data.id;
-			lastSharedBoard = JSON.stringify(board);
-			lastSharedStyle = JSON.stringify(styleConfig);
 		} else {
 			alert('공유 실패: ' + (data.error || '알 수 없는 에러'));
-		}
-	}
-
-	async function updateSharedBoard() {
-		if (!sharedId) return;
-		const res = await fetch('/api/bingo', {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: sharedId, board, styleConfig })
-		});
-		const data = await res.json();
-		if (data.id) {
-			lastSharedBoard = JSON.stringify(board);
-			lastSharedStyle = JSON.stringify(styleConfig);
-			alert('변경사항이 성공적으로 적용되었습니다!');
-		} else {
-			alert('업데이트 실패: ' + (data.error || '알 수 없는 에러'));
 		}
 	}
 
@@ -134,11 +114,6 @@
 	// 	}
 	// });
 
-	function toggleCell(i: number, j: number) {
-		checked[i][j] = !checked[i][j];
-		updateBingoCount();
-	}
-
 	function updateBingoCount() {
 		let count = 0;
 		// 가로
@@ -152,32 +127,12 @@
 	}
 </script>
 
-{#if false}
-  <div class="bingo-shared">
-    <div class="bingo-count">완성한 빙고: <strong>{bingoCount}</strong></div>
-    <div class="board-grid" style="width:600px; height:600px;">
-      {#each sharedBoard as row, i}
-        {#each row as cell, j}
-          <div class="cell-outer">
-            <div
-              class="cell-content bingo-cell {checked[i][j] ? 'checked' : ''}"
-              on:click={() => toggleCell(i, j)}
-              tabindex="0"
-              role="button"
-              aria-pressed={checked[i][j]}
-            >{cell}</div>
-          </div>
-        {/each}
-      {/each}
-    </div>
-  </div>
-{:else}
 <div
 	class="style-controls-grid"
 	style="
     display: grid;
     grid-template-columns: repeat(3, minmax(120px, 1fr));
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
     gap: 12px 18px;
     align-items: end;
     margin-bottom: 12px;
@@ -185,16 +140,24 @@
   "
 >
 	<label
+		>셀 배경색
+		<ColorPicker bind:hex={styleConfig.cellColor} label="" />
+	</label>
+	<label
 		>글자색
 		<ColorPicker bind:hex={styleConfig.color} label="" />
 	</label>
 	<label
-		>배경색
+		>전체 배경색
 		<ColorPicker bind:hex={styleConfig.bgColor} label="" />
 	</label>
 	<label
-		>셀 배경색
-		<ColorPicker bind:hex={styleConfig.cellColor} label="" />
+		>선택 시 셀 배경색
+		<ColorPicker bind:hex={styleConfig.checkedCellColor} label="" />
+	</label>
+	<label
+		>선택 시 글자색
+		<ColorPicker bind:hex={styleConfig.checkedCellTextColor} label="" />
 	</label>
 	<label
 		>셀 테두리색
@@ -216,20 +179,14 @@
 
 <!-- 공유 버튼 UI 추가 -->
 <div class="share-controls">
-  {#if !shareUrl}
-    <button class="share-btn" on:click={shareBoard}>
-      공유하기
-    </button>
-  {:else}
+  <button class="share-btn" on:click={shareBoard}>
+    공유하기
+  </button>
+  {#if shareUrl}
     <input class="share-url" type="text" readonly value={shareUrl} on:focus={(e) => e.target.select()} />
     <button class="copy-btn" on:click={copyShareUrl}>복사</button>
     {#if copySuccess}
       <span class="copy-success">복사됨!</span>
-    {/if}
-    {#if hasUnsavedChanges}
-      <button class="update-btn" on:click={updateSharedBoard}>
-        변경사항 적용하기
-      </button>
     {/if}
   {/if}
 </div>
@@ -240,7 +197,7 @@
 >
 	{#each board as row, i}
 		{#each row as cell, j}
-			<div class="cell-outer" tabindex="0" on:click={() => textareaRefs[i][j].focus()}>
+			<div class="cell-outer" tabindex="0" on:click={() => toggleCell(i, j)} role="button" aria-pressed={checked[i][j]}>
 				<textarea
 					class="cell-input"
 					bind:this={textareaRefs[i][j]}
@@ -249,15 +206,11 @@
 					maxlength={40}
 					placeholder="테마명을 입력하세요"
 					rows="3"
-					style="background:{styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible
-						? 'solid'
-						: 'none'};"
+					style="background:{checked[i][j] ? styleConfig.checkedCellColor : styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
 				></textarea>
 				<div
 					class="cell-content"
-					style="background:{styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible
-						? 'solid'
-						: 'none'};"
+					style="background:{checked[i][j] ? styleConfig.checkedCellColor : styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
 				>
 					{board[i][j] || '테마명을 입력하세요'}
 				</div>
@@ -265,13 +218,12 @@
 		{/each}
 	{/each}
 </div>
-{/if}
 
 <style>
 	.style-controls-grid {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(120px, 1fr));
-		grid-template-rows: repeat(2, auto);
+		grid-template-rows: repeat(3, auto);
 		gap: 12px 18px;
 		align-items: end;
 		margin-bottom: 12px;
@@ -401,14 +353,5 @@
 	.bingo-cell.checked {
 		background: #b3e6b3 !important;
 		color: #1a4d1a !important;
-	}
-	.update-btn {
-		padding: 0.35em 0.9em;
-		font-size: 0.97em;
-		border-radius: 6px;
-		border: 1px solid #ccc;
-		background: #f8f8f8;
-		cursor: pointer;
-		margin-left: 0.3em;
 	}
 </style>
