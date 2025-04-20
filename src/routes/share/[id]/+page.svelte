@@ -64,6 +64,7 @@ onMount(async () => {
               tabindex="0"
               role="button"
               aria-pressed={checked[i][j]}
+              style="background:{styleConfig.cellColor || '#fff9f9'};border:1.5px solid {styleConfig.cellBorderColor || '#bbbbbb'};border-style:{styleConfig.borderVisible === false ? 'none' : 'solid'};"
             >{cell}</div>
           </div>
         {/each}

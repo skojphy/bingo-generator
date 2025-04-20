@@ -52,3 +52,27 @@ export const GET: RequestHandler = async ({ url }) => {
 		return json({ error: '빙고판을 찾을 수 없습니다.' }, { status: 404 });
 	}
 };
+
+export const PATCH: RequestHandler = async ({ request }) => {
+	const { id, board, styleConfig } = await request.json();
+	if (!id) return json({ error: 'id 파라미터 필요' }, { status: 400 });
+	try {
+		const response = await notion.pages.update({
+			page_id: id,
+			properties: {
+				board: {
+					rich_text: [{ text: { content: JSON.stringify(board) } }]
+				},
+				...(styleConfig && {
+					styleConfig: {
+						rich_text: [{ text: { content: JSON.stringify(styleConfig) } }]
+					}
+				})
+			}
+		});
+		return json({ id: response.id });
+	} catch (err) {
+		console.error(err);
+		return json({ error: 'Notion 업데이트 실패' }, { status: 500 });
+	}
+};
