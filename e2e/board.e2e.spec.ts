@@ -12,12 +12,27 @@ test.describe('빙고판 UI E2E', () => {
     await expect(cells.nth(0)).toHaveValue('테스트 방');
 
     // 스타일 커스텀: 글자색, 배경색, 폰트
-    const colorInput = page.locator('input[type="color"]').first();
-    const bgColorInput = page.locator('input[type="color"]').nth(1);
-    const fontSelect = page.locator('select');
+    // 컬러피커 기반으로 수정
+    // 글자색(ColorPicker 첫 번째)
+    await page.locator('label:has-text("글자색") .color').first().click();
+    const 글자색Popup = page.locator('.wrapper[role="dialog"]:visible');
+    await 글자색Popup.waitFor({ state: 'visible' });
+    const 글자색HexInput = 글자색Popup.locator('input[aria-label="hex color"]');
+    await 글자색HexInput.waitFor({ state: 'visible' });
+    await 글자색HexInput.fill('#ff0000');
+    await page.keyboard.press('Enter');
 
-    await colorInput.fill('#ff0000');
-    await bgColorInput.fill('#00ff00');
+    // 배경색(ColorPicker 두 번째)
+    await page.locator('label:has-text("배경색") .color').first().click();
+    const 배경색Popup = page.locator('.wrapper[role="dialog"]:visible');
+    await 배경색Popup.waitFor({ state: 'visible' });
+    const 배경색HexInput = 배경색Popup.locator('input[aria-label="hex color"]');
+    await 배경색HexInput.waitFor({ state: 'visible' });
+    await 배경색HexInput.fill('#00ff00');
+    await page.keyboard.press('Enter');
+
+    // 폰트
+    const fontSelect = page.locator('select');
     await fontSelect.selectOption('monospace');
 
     // 스타일이 실제로 적용되는지 확인 (간단히 배경색, 폰트)
