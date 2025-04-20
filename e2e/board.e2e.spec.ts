@@ -40,4 +40,23 @@ test.describe('빙고판 UI E2E', () => {
     await expect(board).toHaveCSS('background-color', 'rgb(0, 255, 0)');
     await expect(board).toHaveCSS('font-family', /monospace/);
   });
+
+  test('셀 테두리 토글 동작', async ({ page }) => {
+    await page.goto('/');
+
+    // "셀 테두리 표시" 토글이 존재
+    const borderToggle = page.getByLabel('셀 테두리 표시');
+    await expect(borderToggle).toBeVisible();
+
+    // 토글을 끄면 → 모든 셀의 border가 없어짐
+    await borderToggle.uncheck();
+    const cell = page.locator('.cell').first();
+    await expect(cell).toBeVisible(); // 셀 존재/렌더링을 먼저 보장
+    await expect(cell).toHaveCSS('border-style', 'none');
+
+    // 토글을 다시 켜면 → border가 다시 생김
+    await borderToggle.check();
+    await expect(cell).toBeVisible(); // 셀 존재/렌더링을 먼저 보장
+    await expect(cell).not.toHaveCSS('border-style', 'none');
+  });
 });
