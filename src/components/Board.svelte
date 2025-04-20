@@ -39,12 +39,15 @@
 	let copySuccess = false;
 	let bingoCount = 0; // bingoCount 정의 추가 (초기값 0)
 
+	// 제목 상태 추가
+	let boardTitle = '';
+
 	async function shareBoard() {
 		// Notion API에 POST 요청
 		const res = await fetch('/api/bingo', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ board, styleConfig })
+			body: JSON.stringify({ board, styleConfig, boardTitle })
 		});
 		const data = await res.json();
 		if (data.id) {
@@ -131,6 +134,17 @@
 
 <!-- 테마 스타일 커스텀 컴포넌트로 분리 -->
 <ThemeStyleControls bind:styleConfig {fontOptions} />
+
+<!-- 빙고판 제목 입력 UI 추가 -->
+<div class="bingo-title-wrap">
+	<input
+		class="bingo-title-input"
+		type="text"
+		placeholder="제목을 입력하세요"
+		bind:value={boardTitle}
+		maxlength={40}
+	/>
+</div>
 
 <div
 	class="board-grid"
@@ -297,24 +311,26 @@
 		font-size: 0.97em;
 		margin-left: 0.6em;
 	}
-	.bingo-shared {
-		margin-bottom: 18px;
+	.bingo-title-wrap {
+		width: 600px;
+		margin: 0 auto 18px auto;
+		display: flex;
+		justify-content: center;
 	}
-	.bingo-count {
-		font-size: 1.13em;
-		margin-bottom: 12px;
-		font-weight: 500;
-		color: #2d7d2d;
+	.bingo-title-input {
+		width: 100%;
+		font-size: 1.35em;
+		font-weight: bold;
+		padding: 0.45em 0.8em;
+		border-radius: 8px;
+		border: 1.5px solid #bbb;
+		text-align: center;
+		background: #fafafa;
+		margin-bottom: 0.5em;
+		outline: none;
+		transition: border 0.18s;
 	}
-	.bingo-cell {
-		cursor: pointer;
-		user-select: none;
-		transition:
-			background 0.18s,
-			color 0.18s;
-	}
-	.bingo-cell.checked {
-		background: #b3e6b3 !important;
-		color: #1a4d1a !important;
+	.bingo-title-input:focus {
+		border: 1.5px solid #4c9cff;
 	}
 </style>
