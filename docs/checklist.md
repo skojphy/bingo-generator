@@ -31,34 +31,55 @@
 
 ## 4단계: URL 공유 및 접근
 
-- [ ] 빙고판 고유 URL 생성 (커밋: feat)
-- [ ] URL 복사/공유 기능 (커밋: feat)
-- [ ] 공유 URL로 누구나 접근 가능 (커밋: test)
+- [x] Notion API 연동 (POST/GET) 및 환경변수 적용
+- [x] 빙고판 고유 URL 생성 및 복사/공유 기능
+- [x] 공유 URL(/share/{id}) 접근 시 Notion에서 데이터 불러오기 (Board.svelte 내 임시 구현)
+- [ ] 별도 공유 페이지 분리 및 UX 개선 (예정)
 
 ---
 
 ## 5단계: 빙고 체크/상태 표시 및 이미지 다운로드
 
-- [ ] 칸 클릭 시 체크/해제 (커밋: feat)
-- [ ] 빙고 개수 실시간 표시 (커밋: feat)
-- [ ] 빙고판 이미지 다운로드 (커밋: feat)
+- [x] 칸 클릭 시 체크/해제, 빙고 개수 실시간 표시
+- [ ] 빙고판 이미지 다운로드 (예정)
 
 ---
 
 ## 6단계: 리팩토링/문서화/최적화
 
-- [ ] 코드 리팩토링 (커밋: refactor)
-- [ ] 문서화/README/설계 문서 최신화 (커밋: docs)
-- [ ] 배포(Vercel) (커밋: chore)
+- [ ] 코드 리팩토링 및 a11y 경고 완전 제거 (진행 중)
+- [ ] README/설계 문서 최신화 (예정)
+- [ ] 배포(Vercel 등) (예정)
 
 ---
 
-## 7단계: 테스트 구조/접근성(a11y) 개선 및 분리
+## 7단계: 테스트 구조/접근성(a11y) 개선
 
-- [x] unit test와 e2e test 완전 분리 (vitest, playwright)
-- [x] package.json의 test:unit 스크립트 명확화 (src/demo.spec.ts만 실행)
-- [x] e2e 샘플 테스트 제거, board.e2e.spec.ts만 유지
-- [x] 접근성(a11y) 경고 제거: Cell.svelte와 빙고 셀 div → button으로 변경
-- [x] SvelteKit a11y 경고 없이 모든 테스트 통과
+- [x] unit test/e2e test 분리 및 스크립트 정비
+- [x] 접근성(a11y) 경고 제거 (Cell.svelte, Board.svelte 일부 완료, 추가 개선 필요)
 
 ---
+
+# ✅ 현재까지 주요 구현/해결 내역
+
+- Notion 연동 환경변수 및 컬럼명 이슈 해결 (401/400 에러 → 정상 POST/GET)
+- 공유 URL 생성 및 복사, 공유 모드에서 Notion 데이터 fetch
+- 기존 URL 파라미터 방식 → id 기반 공유로 전환
+- Board.svelte 내 임시 공유 모드(onMount) 지원
+
+---
+
+# 🕑 앞으로의 주요 TODO
+
+- [ ] `/share/[id]` 별도 페이지 분리 및 UX 개선
+- [ ] 빙고판 이미지 다운로드 기능
+- [ ] a11y 경고 완전 제거 및 접근성 개선
+- [ ] 코드 리팩토링 및 문서 최신화
+- [ ] 배포 자동화
+
+---
+
+## 참고
+- 커밋/테스트 타이밍은 항상 안내받고, Conventional Commit 규칙+이모지 사용
+- 환경변수는 `.env`에 저장, 프론트엔드 노출 없음
+- Notion DB 컬럼명은 실제 DB와 항상 일치시켜야 함
