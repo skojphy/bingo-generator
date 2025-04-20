@@ -6,9 +6,18 @@
 		bgColor: '#ffffff',
 		font: 'sans-serif',
 		cellColor: '#fff9f9',
-		cellBorderColor: '#bbb',
+		cellBorderColor: '#bbbbbb',
 		cellBorder: true
 	};
+	// HEX 유효성 보장: undefined/null 방지
+	function ensureHex(val: string, fallback: string) {
+		if (!val || typeof val !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(val)) return fallback;
+		return val;
+	}
+	$: styleConfig.color = ensureHex(styleConfig.color, '#222222');
+	$: styleConfig.bgColor = ensureHex(styleConfig.bgColor, '#ffffff');
+	$: styleConfig.cellColor = ensureHex(styleConfig.cellColor, '#fff9f9');
+	$: styleConfig.cellBorderColor = ensureHex(styleConfig.cellBorderColor, '#bbbbbb');
 	// 5x5 빙고판 2차원 배열로 변환
 	$: board = Array.from({ length: 5 }, (_, i) => rooms.slice(i * 5, i * 5 + 5));
 	function updateCell(i: number, j: number, value: string) {
@@ -25,6 +34,14 @@
 	<label
 		>배경색
 		<ColorPicker bind:hex={styleConfig.bgColor} />
+	</label>
+	<label
+		>셀 배경색
+		<ColorPicker bind:hex={styleConfig.cellColor} />
+	</label>
+	<label
+		>셀 테두리색
+		<ColorPicker bind:hex={styleConfig.cellBorderColor} />
 	</label>
 	<label
 		>폰트
@@ -49,6 +66,7 @@
 				maxlength={40}
 				placeholder="방 이름"
 				rows="3"
+				style="background:{styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};"
 			></textarea>
 		{/each}
 	{/each}
