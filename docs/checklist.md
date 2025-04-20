@@ -1,9 +1,10 @@
 # 구현 단계별 체크리스트 
 
 ## 1단계: 프로젝트 환경 구축 및 기본 구조
-- [ ] SvelteKit, Tailwind, Vitest, Playwright 환경 세팅 (커밋: )
-- [ ] 폴더/컴포넌트 구조 설계 (커밋: )
-- [ ] ESLint, Prettier 등 설정 (커밋: )
+- [x] SvelteKit, Tailwind, Vitest, Playwright 환경 세팅 (커밋: f849aac)
+- [x] 폴더/컴포넌트 구조 설계 (커밋: f849aac)
+- [x] ESLint, Prettier 등 설정 (커밋: f849aac)
+- [x] 의존성/패키지 추가 및 누락 패키지 해결 (커밋: 8e60e37, f6d04c9)
 
 ---
 
