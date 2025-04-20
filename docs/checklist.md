@@ -47,3 +47,15 @@
 - [ ] 코드 리팩토링 (커밋: refactor)
 - [ ] 문서화/README/설계 문서 최신화 (커밋: docs)
 - [ ] 배포(Vercel) (커밋: chore)
+
+---
+
+## 7단계: 테스트 구조/접근성(a11y) 개선 및 분리
+
+- [x] unit test와 e2e test 완전 분리 (vitest, playwright)
+- [x] package.json의 test:unit 스크립트 명확화 (src/demo.spec.ts만 실행)
+- [x] e2e 샘플 테스트 제거, board.e2e.spec.ts만 유지
+- [x] 접근성(a11y) 경고 제거: Cell.svelte와 빙고 셀 div → button으로 변경
+- [x] SvelteKit a11y 경고 없이 모든 테스트 통과
+
+---
