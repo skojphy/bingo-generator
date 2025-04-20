@@ -44,6 +44,7 @@
 		"vitest": "^3.1.1"
 	},
 	"dependencies": {
+		"@notionhq/client": "^2.3.0",
 		"html2canvas": "^1.4.1",
 		"svelte-awesome-color-picker": "^4.0.1"
 	}
