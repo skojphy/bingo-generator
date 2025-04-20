@@ -63,31 +63,31 @@
 	import { get } from 'svelte/store';
 
 	// 공유 모드: /share/{id} 경로 처리 (임시, 실제 구현은 별도 페이지에서)
-	let isShared = false;
-	let sharedBoard: string[][] = [];
-	let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
-	let bingoCount = 0;
+	// let isShared = false;
+	// let sharedBoard: string[][] = [];
+	// let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+	// let bingoCount = 0;
 
-	onMount(async () => {
-		const url = new URL(window.location.href);
-		const shareId = url.pathname.startsWith('/share/') ? url.pathname.split('/').pop() : null;
-		if (shareId) {
-			isShared = true;
-			try {
-				const res = await fetch(`/api/bingo?id=${shareId}`);
-				const data = await res.json();
-				if (data.board) {
-					sharedBoard = data.board;
-					checked = Array.from({ length: 5 }, () => Array(5).fill(false));
-					updateBingoCount();
-				} else {
-					alert('빙고판 데이터를 불러올 수 없습니다.');
-				}
-			} catch (e) {
-				alert('빙고판 불러오기 실패!');
-			}
-		}
-	});
+	// onMount(async () => {
+	// 	const url = new URL(window.location.href);
+	// 	const shareId = url.pathname.startsWith('/share/') ? url.pathname.split('/').pop() : null;
+	// 	if (shareId) {
+	// 		isShared = true;
+	// 		try {
+	// 			const res = await fetch(`/api/bingo?id=${shareId}`);
+	// 			const data = await res.json();
+	// 			if (data.board) {
+	// 				sharedBoard = data.board;
+	// 				checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+	// 				updateBingoCount();
+	// 			} else {
+	// 				alert('빙고판 데이터를 불러올 수 없습니다.');
+	// 			}
+	// 		} catch (e) {
+	// 			alert('빙고판 불러오기 실패!');
+	// 		}
+	// 	}
+	// });
 
 	function decodeBoard(param: string): string[][] {
 		const arr = param.split(',').map(cell => decodeURIComponent(cell));
@@ -126,7 +126,7 @@
 	}
 </script>
 
-{#if isShared}
+{#if false}
   <div class="bingo-shared">
     <div class="bingo-count">완성한 빙고: <strong>{bingoCount}</strong></div>
     <div class="board-grid" style="width:600px; height:600px;">
