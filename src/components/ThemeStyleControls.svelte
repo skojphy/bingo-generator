@@ -46,4 +46,39 @@
 .style-label > span {
   min-width: 0;
 }
+
+@media (max-width: 700px) {
+  .style-controls-grid {
+    max-width: 98vw;
+    gap: 8px 10px;
+  }
+  .style-label {
+    font-size: 0.93em;
+  }
+  .style-label > span {
+    font-size: 0.93em;
+  }
+  select {
+    font-size: 0.96em;
+  }
+}
+@media (max-width: 430px) {
+  .style-controls-grid {
+    max-width: 100vw;
+    gap: 6px 4px;
+  }
+  .style-label {
+    font-size: 0.83em;
+  }
+  .style-label > span {
+    font-size: 0.83em;
+  }
+  select {
+    font-size: 0.85em;
+  }
+}
+
+:global(body) {
+  min-width: 380px;
+}
 </style>

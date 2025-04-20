@@ -36,4 +36,16 @@
   color: #2f8466;
   text-decoration: underline;
 }
+:global(html), :global(body) {
+  min-width: 380px;
+  width: 100vw;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+main {
+  min-width: 380px;
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
 </style>
