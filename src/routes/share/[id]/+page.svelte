@@ -56,10 +56,9 @@ onMount(async () => {
 {:else if notFound}
   <div class="not-found">빙고판을 찾을 수 없습니다.</div>
 {:else}
-  <div class="bingo-shared">
+  <div class="bingo-shared bingo-shared-spacing">
     <div class="bingo-title-shared">{boardTitle}</div>
-    <div class="bingo-count">완성한 빙고: <strong>{bingoCount}</strong></div>
-    <div class="board-grid" style="width:600px; height:600px; background:{styleConfig.bgColor}; font-family:{styleConfig.font}; color:{styleConfig.color};">
+    <div class="board-grid" style="width:600px; height:600px; background:{styleConfig.bgColor || '#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color || '#222222'};">
       {#each board as row, i}
         {#each row as cell, j}
           <div class="cell-outer">
@@ -69,12 +68,13 @@ onMount(async () => {
               tabindex="0"
               role="button"
               aria-pressed={checked[i][j]}
-              style="background:{checked[i][j] ? (styleConfig.checkedCellColor || '#b3e6b3') : (styleConfig.cellColor || '#fff9f9')};border:1.5px solid {styleConfig.cellBorderColor || '#bbbbbb'};border-style:{styleConfig.borderVisible === false ? 'none' : 'solid'};color:{checked[i][j] ? (styleConfig.checkedCellTextColor || '#1a4d1a') : (styleConfig.color || '#222222')};"
+              style="background:{checked[i][j] ? (styleConfig.checkedCellColor ?? styleConfig.cellColor ?? '#2f8466') : (styleConfig.cellColor ?? '#b5f4e0')};border:1.5px solid {styleConfig.cellBorderColor ?? '#222222'};border-style:{styleConfig.borderVisible === false ? 'none' : 'solid'};color:{checked[i][j] ? (styleConfig.checkedCellTextColor ?? styleConfig.color ?? '#ffffff') : (styleConfig.color ?? '#222222')};"
             >{cell}</div>
           </div>
         {/each}
       {/each}
     </div>
+    <div class="bingo-count-shared">완성한 빙고: <strong>{bingoCount}</strong></div>
   </div>
 {/if}
 
@@ -85,14 +85,29 @@ onMount(async () => {
   padding: 2em 0;
   color: #888;
 }
-.bingo-shared {
-  margin-bottom: 18px;
+.bingo-shared-spacing {
+  margin-top: 48px;
 }
-.bingo-count {
+.bingo-count-shared {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 32px auto 0 auto;
   font-size: 1.13em;
-  margin-bottom: 12px;
   font-weight: 500;
   color: #2d7d2d;
+}
+.bingo-title-shared {
+  width: 600px;
+  margin: 0 auto 18px auto;
+  font-size: 1.35em;
+  font-weight: bold;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1.5px solid #bbb;
+  padding: 0.45em 0.8em;
+  margin-bottom: 0.5em;
 }
 .board-grid {
   display: grid;
@@ -126,20 +141,9 @@ onMount(async () => {
   cursor: pointer;
   transition: background 0.18s, color 0.18s;
 }
+/* 스타일 config에 따라 동적으로 적용, !important 제거 */
 .bingo-cell.checked {
-  background: #b3e6b3 !important;
-  color: #1a4d1a !important;
-}
-.bingo-title-shared {
-  width: 600px;
-  margin: 0 auto 18px auto;
-  font-size: 1.35em;
-  font-weight: bold;
-  text-align: center;
-  background: #fafafa;
-  border-radius: 8px;
-  border: 1.5px solid #bbb;
-  padding: 0.45em 0.8em;
-  margin-bottom: 0.5em;
+  /* background: #b3e6b3 !important; */
+  /* color: #1a4d1a !important; */
 }
 </style>

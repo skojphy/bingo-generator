@@ -1,16 +1,14 @@
 <script lang="ts">
-	import ColorPicker from 'svelte-awesome-color-picker';
-	import Cell from './Cell.svelte';
 	import ThemeStyleControls from './ThemeStyleControls.svelte';
 	export let rooms: string[] = Array(25).fill('');
 	export let styleConfig = {
 		color: '#222222',
 		bgColor: '#ffffff',
 		font: 'sans-serif',
-		cellColor: '#fff9f9',
-		cellBorderColor: '#bbbbbb',
-		checkedCellColor: '#b3e6b3',
-		checkedCellTextColor: '#1a4d1a',
+		cellColor: '#b5f4e0',
+		cellBorderColor: '#222222',
+		checkedCellColor: '#2f8466',
+		checkedCellTextColor: '#ffffff',
 		borderVisible: true
 	};
 	// HEX 유효성 보장: undefined/null 방지
@@ -20,10 +18,10 @@
 	}
 	$: styleConfig.color = ensureHex(styleConfig.color, '#222222');
 	$: styleConfig.bgColor = ensureHex(styleConfig.bgColor, '#ffffff');
-	$: styleConfig.cellColor = ensureHex(styleConfig.cellColor, '#fff9f9');
-	$: styleConfig.cellBorderColor = ensureHex(styleConfig.cellBorderColor, '#bbbbbb');
-	$: styleConfig.checkedCellColor = ensureHex(styleConfig.checkedCellColor, '#b3e6b3');
-	$: styleConfig.checkedCellTextColor = ensureHex(styleConfig.checkedCellTextColor, '#1a4d1a');
+	$: styleConfig.cellColor = ensureHex(styleConfig.cellColor, '#b5f4e0');
+	$: styleConfig.cellBorderColor = ensureHex(styleConfig.cellBorderColor, '#222222');
+	$: styleConfig.checkedCellColor = ensureHex(styleConfig.checkedCellColor, '#2f8466');
+	$: styleConfig.checkedCellTextColor = ensureHex(styleConfig.checkedCellTextColor, '#ffffff');
 	// 5x5 빙고판 2차원 배열로 변환
 	$: board = Array.from({ length: 5 }, (_, i) => rooms.slice(i * 5, i * 5 + 5));
 	function updateCell(i: number, j: number, value: string) {
@@ -47,7 +45,7 @@
 		const res = await fetch('/api/bingo', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ board, styleConfig, boardTitle })
+			body: JSON.stringify({ board, styleConfig, boardTitle, name: boardTitle }) // name도 전달
 		});
 		const data = await res.json();
 		if (data.id) {
@@ -130,12 +128,25 @@
 		if ([0, 1, 2, 3, 4].every((k) => checked[k][4 - k])) count++;
 		bingoCount = count;
 	}
+
+	// 적용하기/공유하기 버튼 상태 관리
+	let styleChanged = false;
+
+	function handleStyleChange() {
+		styleChanged = true;
+	}
+
+	$: styleConfig, handleStyleChange();
+
+	function applyStyle() {
+		styleChanged = false;
+	}
 </script>
 
 <!-- 테마 스타일 커스텀 컴포넌트로 분리 -->
-<ThemeStyleControls bind:styleConfig {fontOptions} />
+<ThemeStyleControls bind:styleConfig {fontOptions} on:input={handleStyleChange} />
 
-<!-- 빙고판 제목 입력 UI 추가 -->
+<!-- 빙고판 제목 입력 UI -->
 <div class="bingo-title-wrap">
 	<input
 		class="bingo-title-input"
@@ -146,6 +157,7 @@
 	/>
 </div>
 
+<!-- 빙고판 영역 -->
 <div
 	class="board-grid"
 	style="width:600px; height:600px; background:{styleConfig.bgColor}; font-family:{styleConfig.font}; color:{styleConfig.color};"
@@ -188,9 +200,11 @@
 	{/each}
 </div>
 
-<!-- 공유 버튼 UI 추가 -->
-<div class="share-controls">
-	<button class="share-btn" on:click={shareBoard}> 공유하기 </button>
+<!-- 공유 버튼 UI: 빙고판과 버튼 사이 여백 추가 -->
+<div class="share-controls share-controls-bottom">
+	<button class="share-btn" on:click={styleChanged ? applyStyle : shareBoard}>
+		{styleChanged ? '적용하기' : '공유하기'}
+	</button>
 	{#if shareUrl}
 		<input
 			class="share-url"
@@ -278,6 +292,10 @@
 		gap: 0.5rem;
 		margin-bottom: 18px;
 	}
+	.share-controls-bottom {
+		margin-top: 32px;
+		justify-content: center;
+	}
 	.share-btn {
 		padding: 0.5em 1.2em;
 		background: #f5f5f5;
@@ -313,7 +331,7 @@
 	}
 	.bingo-title-wrap {
 		width: 600px;
-		margin: 0 auto 18px auto;
+		margin: 36px auto 18px auto;
 		display: flex;
 		justify-content: center;
 	}
