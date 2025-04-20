@@ -50,7 +50,7 @@ test.describe('빙고판 UI E2E', () => {
 
     // 토글을 끄면 → 모든 셀의 border가 없어짐
     await borderToggle.uncheck();
-    const cell = page.locator('.cell').first();
+    const cell = page.locator('.cell-content').first();
     await expect(cell).toBeVisible(); // 셀 존재/렌더링을 먼저 보장
     await expect(cell).toHaveCSS('border-style', 'none');
 

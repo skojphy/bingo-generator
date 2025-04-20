@@ -8,7 +8,6 @@
 		font: 'sans-serif',
 		cellColor: '#fff9f9',
 		cellBorderColor: '#bbbbbb',
-		cellBorder: true,
 		borderVisible: true
 	};
 	// HEX 유효성 보장: undefined/null 방지
@@ -26,6 +25,7 @@
 		rooms[i * 5 + j] = value;
 	}
 	const fontOptions = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
+	let textareaRefs = Array.from({ length: 5 }, () => Array(5));
 </script>
 
 <div class="style-controls-grid"
@@ -71,15 +71,21 @@
 >
   {#each board as row, i}
     {#each row as cell, j}
-      <textarea
-        class="cell-input"
-        bind:value={board[i][j]}
-        on:input={(e) => updateCell(i, j, (e.target as HTMLTextAreaElement)?.value || '')}
-        maxlength={40}
-        placeholder="방 이름"
-        style="background:{styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};"
-        rows="1"
-      ></textarea>
+      <div class="cell-outer" tabindex="0" on:click={() => textareaRefs[i][j].focus()}>
+        <textarea
+          class="cell-input"
+          bind:this={textareaRefs[i][j]}
+          bind:value={board[i][j]}
+          on:input={(e) => updateCell(i, j, (e.target as HTMLTextAreaElement)?.value || '')}
+          maxlength={40}
+          placeholder="방 이름"
+          rows="3"
+          style="background:{styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};"
+        ></textarea>
+        <div class="cell-content"
+          style="background:{styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible ? 'solid' : 'none'};"
+        >{board[i][j] || '방 이름'}</div>
+      </div>
     {/each}
   {/each}
 </div>
@@ -109,14 +115,24 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     border-radius: 12px;
     padding: 24px;
+    z-index: 0;
   }
-  .cell-input {
+  .cell-outer {
+    position: relative;
     width: 100%;
     height: 100%;
-    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    outline: none;
+    z-index: 0;
+  }
+  .cell-input {
+    position: absolute;
+    opacity: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
     font-size: 1.05rem;
     border-radius: 10px;
     text-align: center;
@@ -125,5 +141,31 @@
     margin: 0;
     box-sizing: border-box;
     overflow-wrap: break-word;
+    white-space: pre-line;
+  }
+  .cell-content {
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    text-align: center;
+    white-space: pre-line;
+    border-radius: 10px;
+    box-sizing: border-box;
+    pointer-events: none;
+    color: inherit;
+    background: transparent;
+  }
+  .cell-outer:focus-within .cell-input,
+  .cell-outer:active .cell-input {
+    opacity: 1;
+    z-index: 1;
+  }
+  .cell-outer:focus-within .cell-content,
+  .cell-outer:active .cell-content {
+    opacity: 0;
   }
 </style>
