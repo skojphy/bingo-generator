@@ -10,38 +10,65 @@
   function updateCell(i: number, j: number, value: string) {
     rooms[i * 5 + j] = value;
   }
+  const fontOptions = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy'];
 </script>
 
-<div class="board" style="background:{styleConfig.bgColor}; font-family:{styleConfig.font}; color:{styleConfig.color}">
-  {#each board as row, i}
-    <div class="row">
-      {#each row as cell, j}
-        <textarea
-          class="cell-input"
-          bind:value={board[i][j]}
-          on:input={(e) => updateCell(i, j, (e.target as HTMLTextAreaElement)?.value || '')}
-          maxlength={40}
-          placeholder="방 이름"
-          rows="3"
-        ></textarea>
+<div class="style-controls">
+  <label>글자색
+    <input type="color" bind:value={styleConfig.color}>
+  </label>
+  <label>배경색
+    <input type="color" bind:value={styleConfig.bgColor}>
+  </label>
+  <label>폰트
+    <select bind:value={styleConfig.font}>
+      {#each fontOptions as font}
+        <option value={font}>{font}</option>
       {/each}
-    </div>
+    </select>
+  </label>
+</div>
+
+<div class="board-grid" style="background:{styleConfig.bgColor}; font-family:{styleConfig.font}; color:{styleConfig.color}">
+  {#each board as row, i}
+    {#each row as cell, j}
+      <textarea
+        class="cell-input"
+        bind:value={board[i][j]}
+        on:input={(e) => updateCell(i, j, (e.target as HTMLTextAreaElement)?.value || '')}
+        maxlength={40}
+        placeholder="방 이름"
+        rows="3"
+      ></textarea>
+    {/each}
   {/each}
 </div>
 
 <style>
-.board {
+.style-controls {
   display: flex;
-  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 18px;
   align-items: center;
-  padding: 16px;
+  justify-content: center;
+}
+.style-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 12px;
+  padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  min-width: 350px;
-  max-width: 600px;
-}
-.row {
-  display: flex;
+  min-width: 600px;
+  max-width: 650px;
+  margin: 0 auto;
 }
 .cell-input {
   width: 110px;
@@ -53,7 +80,6 @@
   justify-content: center;
   font-size: 1.05rem;
   background: rgba(255,255,255,0.9);
-  margin: 4px;
   border-radius: 10px;
   word-break: break-all;
   text-align: center;
