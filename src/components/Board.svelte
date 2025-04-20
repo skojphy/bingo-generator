@@ -20,11 +20,11 @@
 <div class="style-controls">
 	<label
 		>글자색
-		<input type="color" bind:value={styleConfig.color} />
+		<ColorPicker bind:hex={styleConfig.color} />
 	</label>
 	<label
 		>배경색
-		<input type="color" bind:value={styleConfig.bgColor} />
+		<ColorPicker bind:hex={styleConfig.bgColor} />
 	</label>
 	<label
 		>폰트
