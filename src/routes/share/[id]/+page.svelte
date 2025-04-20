@@ -9,6 +9,8 @@ let loading = true;
 let notFound = false;
 let bingoCount = 0;
 let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+let boardTitle = '';
+let createdAt = '';
 
 function updateBingoCount() {
   let count = 0;
@@ -33,6 +35,8 @@ onMount(async () => {
     if (data.board) {
       board = data.board;
       styleConfig = data.styleConfig || {};
+      boardTitle = data.boardTitle || '';
+      createdAt = data.createdAt || '';
       checked = Array.from({ length: 5 }, () => Array(5).fill(false));
       updateBingoCount();
       loading = false;
@@ -53,6 +57,7 @@ onMount(async () => {
   <div class="not-found">빙고판을 찾을 수 없습니다.</div>
 {:else}
   <div class="bingo-shared">
+    <div class="bingo-title-shared">{boardTitle}</div>
     <div class="bingo-count">완성한 빙고: <strong>{bingoCount}</strong></div>
     <div class="board-grid" style="width:600px; height:600px; background:{styleConfig.bgColor}; font-family:{styleConfig.font}; color:{styleConfig.color};">
       {#each board as row, i}
@@ -124,5 +129,17 @@ onMount(async () => {
 .bingo-cell.checked {
   background: #b3e6b3 !important;
   color: #1a4d1a !important;
+}
+.bingo-title-shared {
+  width: 600px;
+  margin: 0 auto 18px auto;
+  font-size: 1.35em;
+  font-weight: bold;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1.5px solid #bbb;
+  padding: 0.45em 0.8em;
+  margin-bottom: 0.5em;
 }
 </style>
