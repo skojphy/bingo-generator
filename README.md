@@ -1,38 +1,58 @@
-# sv
+# 방탈출 빙고 생성기
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## 프로젝트 소개
 
-## Creating a project
+- 사용자가 입력한 테마로 5x5 빙고판을 만들고, URL로 공유할 수 있는 SvelteKit 기반 웹 서비스
 
-If you're seeing this, you've probably already done this step. Congrats!
+## 주요 기능
 
-```bash
-# create a new project in the current directory
-npx sv create
+1. 빙고판 생성 (테마 25개 입력)
+2. 테마 서식(색상: 옵션+직접입력, 폰트: 옵션 선택) 지정
+3. 빙고판 URL 공유 (누구나 접근 가능)
+4. 빙고 체크 및 빙고 개수 표시
+5. 이미지로 다운로드
 
-# create a new project in my-app
-npx sv create my-app
-```
+## 사용법
 
-## Developing
+1. 테마 입력 → 빙고판 생성
+2. 각 칸별 스타일(색상, 폰트) 지정
+3. URL 복사/공유
+4. 빙고 체크 및 결과 확인
+5. 이미지 다운로드
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## 개발 및 테스트
 
-```bash
-npm run dev
+- TDD 기반 개발
+- 커밋 체크리스트 및 글로벌 룰 준수
+- 테스트 도구:
+  - 컴포넌트/단위 테스트: Vitest + @testing-library/svelte
+  - E2E 테스트: Playwright
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## 기술 스택
 
-## Building
+- Svelte 5, SvelteKit
+- Tailwind CSS
+- Vitest, @testing-library/svelte, Playwright
+- Prettier, ESLint
+- 배포: Vercel
 
-To create a production version of your app:
+## 폴더 구조
 
-```bash
-npm run build
-```
+/src
+/components
+/routes
+/lib
+/tests
 
-You can preview the production build with `npm run preview`.
+## 커밋 메시지 규칙
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- feat: 새로운 기능
+- fix: 버그 수정
+- test: 테스트 코드
+- refactor: 리팩토링
+- docs: 문서
+- chore: 기타
+
+## 라이선스 및 기여 방법
+
+- MIT 라이선스
