@@ -310,6 +310,7 @@
 		position: relative;
 		width: 100%;
 		height: 100%;
+		aspect-ratio: 1/1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -322,6 +323,9 @@
 		z-index: 0;
 		width: 100%;
 		height: 100%;
+		min-height: 0;
+		max-height: 100%;
+		aspect-ratio: 1/1;
 		font-size: 1.05rem;
 		border-radius: 10px;
 		text-align: center;
@@ -329,6 +333,7 @@
 		padding: 0;
 		margin: 0;
 		box-sizing: border-box;
+		overflow: hidden;
 		overflow-wrap: break-word;
 		white-space: pre-line;
 	}
@@ -336,6 +341,7 @@
 		z-index: 0;
 		width: 100%;
 		height: 100%;
+		aspect-ratio: 1/1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
