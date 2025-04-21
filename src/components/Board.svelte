@@ -205,6 +205,7 @@
 			<div
 				class="cell-outer"
 				on:click={() => toggleCell(i, j)}
+				on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleCell(i, j); }}
 				tabindex="0"
 				role="button"
 				aria-pressed={checked[i][j]}
