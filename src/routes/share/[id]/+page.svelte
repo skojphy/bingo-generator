@@ -1,29 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { error } from '@sveltejs/kit';
 
 	let board: string[][] = [];
 	let styleConfig: any = {};
 	let loading = true;
 	let notFound = false;
 	let bingoCount = 0;
-	let checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+	let checked: boolean[][] = [];
 	let boardTitle = '';
 	let createdAt = '';
 
-	function updateBingoCount() {
-		let count = 0;
-		for (let i = 0; i < 5; ++i) if (checked[i].every((v) => v)) count++;
-		for (let j = 0; j < 5; ++j) if (checked.every((row) => row[j])) count++;
-		if ([0, 1, 2, 3, 4].every((k) => checked[k][k])) count++;
-		if ([0, 1, 2, 3, 4].every((k) => checked[k][4 - k])) count++;
-		bingoCount = count;
+	function toggleCell(i: number, j: number) {
+		checked = checked.map((row: boolean[], rowIdx: number) =>
+			rowIdx === i ? row.map((val: boolean, colIdx: number) => (colIdx === j ? !val : val)) : row
+		);
+		updateBingoCount();
 	}
 
-	function toggleCell(i: number, j: number) {
-		checked[i][j] = !checked[i][j];
-		updateBingoCount();
+	function updateBingoCount() {
+		let count = 0;
+		for (let i = 0; i < checked.length; ++i) if (checked[i].every((v: boolean) => v)) count++;
+		for (let j = 0; j < (checked[0]?.length || 0); ++j)
+			if (checked.every((row: boolean[]) => row[j])) count++;
+		if (checked.every((row: boolean[], idx: number) => row[idx])) count++;
+		if (checked.every((row: boolean[], idx: number) => row[checked.length - 1 - idx])) count++;
+		bingoCount = count;
 	}
 
 	onMount(async () => {
@@ -37,7 +38,9 @@
 				styleConfig = data.styleConfig || {};
 				boardTitle = data.boardTitle || '';
 				createdAt = data.createdAt || '';
-				checked = Array.from({ length: 5 }, () => Array(5).fill(false));
+				checked = Array.from({ length: board.length }, (_, i) =>
+					Array(board[0]?.length || 0).fill(false)
+				);
 				updateBingoCount();
 				loading = false;
 			} else {
@@ -56,26 +59,42 @@
 {:else if notFound}
 	<div class="not-found">빙고판을 찾을 수 없습니다.</div>
 {:else}
-	<div class="bingo-shared bingo-shared-spacing" style="display: flex; flex-direction: column; align-items: center;">
+	<div
+		class="bingo-shared bingo-shared-spacing"
+		style="display: flex; flex-direction: column; align-items: center;"
+	>
 		{#if boardTitle}
 			<h1 class="bingo-title-shared">{boardTitle}</h1>
 		{/if}
 		<div
 			class="board-grid"
-			style="width:600px; height:600px; background:{styleConfig.bgColor || '#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color || '#222222'}; margin: 0 auto;"
+			style="width:600px; height:600px; background:{styleConfig.bgColor ||
+				'#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color ||
+				'#222222'}; margin: 0 auto;"
 		>
 			{#each board as row, i}
 				{#each row as cell, j}
-					<div class="cell-outer">
+					<div
+						class="cell-outer"
+						on:click={() => toggleCell(i, j)}
+						on:keydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') toggleCell(i, j);
+						}}
+						tabindex="0"
+						role="button"
+						aria-pressed={checked[i][j]}
+					>
 						<div
-							class="cell-content bingo-cell {checked[i][j] ? 'checked' : ''} {cell.length > 24 ? 'shrink2' : cell.length > 14 ? 'shrink' : ''}"
-							on:click={() => toggleCell(i, j)}
-							tabindex="0"
-							role="button"
-							aria-pressed={checked[i][j]}
+							class="cell-content bingo-cell {checked[i][j] ? 'checked' : ''} {cell.length > 24
+								? 'shrink2'
+								: cell.length > 14
+									? 'shrink'
+									: ''}"
 							style="background:{checked[i][j]
 								? (styleConfig.checkedCellColor ?? styleConfig.cellColor ?? '#2f8466')
-								: (styleConfig.cellColor ?? '#b5f4e0')};border:1.5px solid {styleConfig.cellBorderColor ?? '#222222'};border-style:{styleConfig.borderVisible === false
+								: (styleConfig.cellColor ??
+									'#b5f4e0')};border:1.5px solid {styleConfig.cellBorderColor ??
+								'#222222'};border-style:{styleConfig.borderVisible === false
 								? 'none'
 								: 'solid'};color:{checked[i][j]
 								? (styleConfig.checkedCellTextColor ?? styleConfig.color ?? '#ffffff')
@@ -92,7 +111,8 @@
 {/if}
 
 <style>
-	:global(body), :global(html) {
+	:global(body),
+	:global(html) {
 		min-width: 0;
 		width: 100%;
 		overflow-x: unset;
@@ -116,7 +136,8 @@
 		font-weight: 500;
 		color: #2d7d2d;
 	}
-	.bingo-title-shared, .bingo-shared-spacing {
+	.bingo-title-shared,
+	.bingo-shared-spacing {
 		min-width: 0;
 		width: 100%;
 		box-sizing: border-box;
@@ -238,12 +259,6 @@
 			font-size: 0.5em;
 		}
 	}
-	/* 스타일 config에 따라 동적으로 적용, !important 제거 */
-	.bingo-cell.checked {
-		/* background: #b3e6b3 !important; */
-		/* color: #1a4d1a !important; */
-	}
-
 	@media (max-width: 700px) {
 		html {
 			font-size: 15px;
