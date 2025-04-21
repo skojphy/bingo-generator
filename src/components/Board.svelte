@@ -389,22 +389,25 @@
 		align-items: center;
 		gap: 0.5rem;
 		margin-bottom: 18px;
+		flex-wrap: wrap;
 	}
 	.share-controls-bottom {
-		margin-top: 32px;
+		margin-top: 24px;
 		justify-content: center;
 	}
 	.share-btn {
-		padding: 0.5em 1.2em;
+		padding: 0.44em 1em;
 		background: #f5f5f5;
 		border: 1.5px solid #bbb;
 		border-radius: 8px;
-		font-size: 1.05rem;
+		font-size: 1.02rem;
 		cursor: pointer;
-		transition: background 0.2s;
-	}
-	.share-btn:hover {
-		background: #e0e0e0;
+		transition: background 0.2s, font-size 0.2s, padding 0.2s, width 0.2s;
+		white-space: normal;
+		word-break: keep-all;
+		width: auto;
+		min-width: 108px;
+		max-width: 220px;
 	}
 	.apply-btn {
 		background: #2f8466;
@@ -414,6 +417,38 @@
 	}
 	.apply-btn:hover {
 		background: #22624c;
+	}
+	@media (max-width: 700px) {
+		.share-controls {
+			gap: 0.35rem;
+		}
+		.share-controls-bottom {
+			margin-top: 14px;
+		}
+		.share-btn {
+			padding: 0.36em 0.7em;
+			font-size: 0.98rem;
+			width: 100%;
+			min-width: 0;
+			max-width: 100vw;
+			margin-bottom: 6px;
+		}
+	}
+	@media (max-width: 430px) {
+		.share-controls {
+			gap: 0.22rem;
+		}
+		.share-controls-bottom {
+			margin-top: 8px;
+		}
+		.share-btn {
+			padding: 0.28em 0.4em;
+			font-size: 0.93rem;
+			width: 100%;
+			min-width: 0;
+			max-width: 100vw;
+			margin-bottom: 4px;
+		}
 	}
 	.share-url {
 		width: 320px;
