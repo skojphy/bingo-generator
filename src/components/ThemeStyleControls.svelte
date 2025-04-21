@@ -9,7 +9,7 @@
   <label class="style-label"><span>셀 배경색</span><ColorPicker bind:hex={styleConfig.cellColor} label="" /></label>
   <label class="style-label"><span>글자색</span><ColorPicker bind:hex={styleConfig.color} label="" /></label>
   <label class="style-label"><span>전체 배경색</span><ColorPicker bind:hex={styleConfig.bgColor} label="" /></label>
-  <label class="style-label"><span>선택 시 셀 배경색</span><ColorPicker bind:hex={styleConfig.checkedCellColor} label="" /></label>
+  <label class="style-label"><span class="long-label">선택 시 셀 배경색</span><ColorPicker bind:hex={styleConfig.checkedCellColor} label="" /></label>
   <label class="style-label"><span>선택 시 글자색</span><ColorPicker bind:hex={styleConfig.checkedCellTextColor} label="" /></label>
   <label class="style-label"><span>셀 테두리색</span><ColorPicker bind:hex={styleConfig.cellBorderColor} label="" /></label>
   <label class="style-label"><span>폰트</span>
@@ -46,6 +46,10 @@
 .style-label > span {
   min-width: 0;
 }
+.style-label > span.long-label {
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
 
 @media (max-width: 700px) {
   .style-controls-grid {
@@ -60,6 +64,15 @@
   }
   select {
     font-size: 0.96em;
+  }
+}
+@media (max-width: 480px) {
+  .style-label {
+    font-size: 0.76em;
+    gap: 0.4em;
+  }
+  .style-label > span {
+    font-size: 0.8em;
   }
 }
 @media (max-width: 430px) {
