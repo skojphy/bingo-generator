@@ -191,7 +191,7 @@
 		placeholder="제목을 입력하세요"
 		bind:value={boardTitle}
 		maxlength={40}
-		on:input={() => styleChanged = true}
+		on:input={() => (styleChanged = true)}
 	/>
 </div>
 
@@ -205,7 +205,9 @@
 			<div
 				class="cell-outer"
 				on:click={() => toggleCell(i, j)}
-				on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleCell(i, j); }}
+				on:keydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') toggleCell(i, j);
+				}}
 				tabindex="0"
 				role="button"
 				aria-pressed={checked[i][j]}
@@ -225,7 +227,11 @@
 						: 'none'};color:{checked[i][j] ? styleConfig.checkedCellTextColor : styleConfig.color};"
 				></textarea>
 				<div
-					class="cell-content {board[i][j]?.length > 24 ? 'shrink2' : board[i][j]?.length > 14 ? 'shrink' : ''}"
+					class="cell-content {board[i][j]?.length > 24
+						? 'shrink2'
+						: board[i][j]?.length > 14
+							? 'shrink'
+							: ''}"
 					style="background:{checked[i][j]
 						? styleConfig.checkedCellColor
 						: styleConfig.cellColor};border:1.5px solid {styleConfig.cellBorderColor};border-style:{styleConfig.borderVisible
@@ -241,7 +247,10 @@
 
 <!-- 공유 버튼 UI: 빙고판과 버튼 사이 여백 추가 -->
 <div class="share-controls share-controls-bottom">
-	<button class="share-btn {styleChanged ? 'apply-btn' : ''}" on:click={styleChanged ? applyStyle : shareBoard}>
+	<button
+		class="share-btn {styleChanged ? 'apply-btn' : ''}"
+		on:click={styleChanged ? applyStyle : shareBoard}
+	>
 		{styleChanged ? '적용하기' : '공유하기'}
 	</button>
 	{#if shareUrl}
@@ -272,35 +281,29 @@
 		grid-template-rows: repeat(5, 1fr);
 		gap: 12px;
 		margin: 0 auto;
-		margin-left: 5vw;
-		margin-right: 5vw;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 		border-radius: 12px;
 		padding: 24px;
 		z-index: 0;
-		min-width: 340px;
 	}
 	@media (max-width: 700px) {
 		.board-grid {
 			width: 92vw !important;
 			height: 92vw !important;
-			min-width: 340px;
-			min-height: 0;
 			padding: 14px;
 			gap: 7px;
-			margin-left: 2vw;
-			margin-right: 2vw;
+			margin: 0 auto;
+			box-sizing: border-box;
 		}
 	}
 	@media (max-width: 430px) {
 		.board-grid {
 			width: 98vw !important;
 			height: 98vw !important;
-			min-width: 340px;
 			padding: 6px;
 			gap: 4px;
-			margin-left: 1vw;
-			margin-right: 1vw;
+			margin: 0 auto;
+			box-sizing: border-box;
 		}
 	}
 	.cell-outer {
@@ -402,7 +405,11 @@
 		border-radius: 8px;
 		font-size: 1.02rem;
 		cursor: pointer;
-		transition: background 0.2s, font-size 0.2s, padding 0.2s, width 0.2s;
+		transition:
+			background 0.2s,
+			font-size 0.2s,
+			padding 0.2s,
+			width 0.2s;
 		white-space: normal;
 		word-break: keep-all;
 		width: auto;
@@ -413,7 +420,9 @@
 		background: #2f8466;
 		color: #fff;
 		border: 1.5px solid #2f8466;
-		transition: background 0.2s, color 0.2s;
+		transition:
+			background 0.2s,
+			color 0.2s;
 	}
 	.apply-btn:hover {
 		background: #22624c;
@@ -491,7 +500,9 @@
 		background: #fafafa;
 		margin-bottom: 0.5em;
 		outline: none;
-		transition: border 0.18s, font-size 0.18s;
+		transition:
+			border 0.18s,
+			font-size 0.18s;
 		box-sizing: border-box;
 	}
 	.bingo-title-input:focus {
@@ -504,14 +515,6 @@
 			font-size: 1.08em;
 			padding: 0.32em 0.5em;
 		}
-		.board-grid {
-			width: 92vw !important;
-			height: 92vw !important;
-			min-width: 0;
-			min-height: 0;
-			padding: 14px;
-			gap: 7px;
-		}
 	}
 	@media (max-width: 430px) {
 		.bingo-title-input {
@@ -519,12 +522,6 @@
 			max-width: 99vw;
 			font-size: 0.97em;
 			padding: 0.25em 0.3em;
-		}
-		.board-grid {
-			width: 98vw !important;
-			height: 98vw !important;
-			padding: 6px;
-			gap: 4px;
 		}
 	}
 </style>
