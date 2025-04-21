@@ -56,15 +56,13 @@
 {:else if notFound}
 	<div class="not-found">빙고판을 찾을 수 없습니다.</div>
 {:else}
-	<div class="bingo-shared bingo-shared-spacing">
+	<div class="bingo-shared bingo-shared-spacing" style="display: flex; flex-direction: column; align-items: center;">
 		{#if boardTitle}
 			<h1 class="bingo-title-shared">{boardTitle}</h1>
 		{/if}
 		<div
 			class="board-grid"
-			style="width:600px; height:600px; background:{styleConfig.bgColor ||
-				'#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color ||
-				'#222222'};"
+			style="width:600px; height:600px; background:{styleConfig.bgColor || '#ffffff'}; font-family:{styleConfig.font || 'sans-serif'}; color:{styleConfig.color || '#222222'}; margin: 0 auto;"
 		>
 			{#each board as row, i}
 				{#each row as cell, j}
